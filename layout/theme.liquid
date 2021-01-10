@@ -8,11 +8,56 @@
   <link rel="canonical" href="{{ canonical_url }}">
   <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
   {{ content_for_header }} <!-- Header hook for plugins -->
-  {{ 'application.scss.css' | asset_url | stylesheet_tag }}
-  {{ 'application.js' | asset_url | script_tag }}
+  {{ 'styles.css' | asset_url | stylesheet_tag }}
 </head>
-<body>
+<body class="no-js">
   {%- section 'header' -%}
-  {{ content_for_layout }}
+  <div class="container">
+    {{ content_for_layout }}
+  </div>
+  {{ 'jquery-3.5.1.min.js' | asset_url | script_tag }}
+  {% if template contains 'product' %}
+    {{ 'option_selection.js' | shopify_asset_url | script_tag }}
+    <script type="text/javascript">
+      (function($) {
+        var onVariantSelected = function(variant, selector) {
+          console.log(variant);
+          // Update price display.
+          var formattedPrice = Shopify.formatMoney(variant.price, "");
+          $('#product-price').text(formattedPrice);
+          // Enable or disable the Add to Cart button.
+          $('#add-to-cart').attr('disabled', variant.available ? null : 'disabled');
+          // Update the featured image.
+          if(variant.featured_image) {
+            var sizedImageUrl = Shopify.Image.getSizedImageUrl(variant.featured_image.src, 'large');
+            $('#featured-image').attr('src', sizedImageUrl);
+          }
+        };
+
+        // Instantiate the option selectors.
+        var optionSelectors = new Shopify.OptionSelectors("product-select", { product: {{ product | json }}, onVariantSelected: onVariantSelected, enableHistoryState: true });
+
+        // Create an event listener to set a specific variant when clicking on image thumbnails.
+        $(document).on('click', '[data-change-variant]', function(e) {
+          e.preventDefault();
+          optionSelectors.selectVariant($(this).data('changeVariant'));
+        });
+
+        // Create an event listener to set a specific variant option when clicking on swatches.
+        $(document).on('click', '[data-change-option]', function(e) {
+          e.preventDefault();
+          var optionIndex = parseInt($(this).data('changeOption')), optionValue = $(this).data('changeValue');
+          if(optionSelectors.optionExistInSelect(optionSelectors.selectors[optionIndex].element, optionValue)) {
+            $(optionSelectors.selectors[optionIndex].element).val(optionValue).trigger('change');
+          }
+        });
+        
+      }(jQuery));
+    </script>
+    {% endif %}
+    <script type="text/javascript">
+      // Remove the JS flag on the body.
+      $('body').removeClass('no-js');
+    </script>
 </body>
 </html>

@@ -1,0 +1,29 @@
+.selector-wrapper {
+  margin-bottom: 1rem;
+}
+
+.single-option-selector {
+  @extend .form-select;
+}
+
+.color-swatch {
+  display: inline-flex;
+  width: 28px;
+  height: 28px;
+  background-color: rgba(6, 34, 51, 0.25);
+  border: 4px solid #fff;
+  border-radius: 15px;
+  transition: box-shadow 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+  &.coffee {
+    background-color: #996258;
+  }
+  &.red-clay {
+    background-color: #e67c57;
+  }
+  &.faded-navy {
+    background-color: #4d5362;
+  }
+  &.dark-olive {
+    background-color: #55542e;
+  }
+}

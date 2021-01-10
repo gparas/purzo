@@ -1,0 +1,22 @@
+{
+  "name": "purzo",
+  "version": "1.0.0",
+  "description": "shopify theme",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gparas/purzo.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gparas/purzo/issues"
+  },
+  "homepage": "https://github.com/gparas/purzo#readme",
+  "dependencies": {
+    "bootstrap": "^5.0.0-beta1"
+  }
+}
