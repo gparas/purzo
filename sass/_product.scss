@@ -1,5 +1,12 @@
 .selector-wrapper {
   margin-bottom: 1rem;
+  display: none;
+}
+
+.swatch-wrapper {
+  .no-js & {
+    display: none;
+  }
 }
 
 .single-option-selector {

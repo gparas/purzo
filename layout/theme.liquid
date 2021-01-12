@@ -26,7 +26,7 @@
           var formattedPrice = Shopify.formatMoney(variant.price, "");
           $('#product-price').text(formattedPrice);
           // Enable or disable the Add to Cart button.
-          $('#add-to-cart').attr('disabled', variant.available ? null : 'disabled');
+          $('#add-to-cart').attr('disabled', variant.available ? null : 'disabled').text(('sold out', variant.available ? 'Add to cart' : 'sold out'));
           // Update the featured image.
           if(variant.featured_image) {
             var sizedImageUrl = Shopify.Image.getSizedImageUrl(variant.featured_image.src, 'large');
