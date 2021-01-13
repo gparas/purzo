@@ -22,21 +22,44 @@
       {% comment %} Variant select {% endcomment %}
       <select class="form-select mb-3" name="id" id="product-select">
         {% for variant in product.variants %}
-        {% if variant.available %}
-        <option value="{{ variant.id }}">
-          {{ variant.title }} - {{ variant.price | money_with_currency }}
-        </option>
-        {% else %}
-        <option disabled="disabled">
-          {{ variant.title }} - sold out
-        </option>
-        {% endif %}
+          {% if variant.available %}
+            <option value="{{ variant.id }}">
+              {{ variant.title }} - {{ variant.price | money_with_currency }}
+            </option>
+          {% else %}
+            <option disabled="disabled">
+              {{ variant.title }} - sold out
+            </option>
+          {% endif %}
         {% endfor %}
       </select>
 
       {% comment %} Variant swatches {% endcomment %}
       {% for option in product.options %}
-      {% include 'swatch' with option %}
+        {% include 'swatch' with option %}
+      {% endfor %}
+
+      {% for product_option in product.options_with_values %}
+        {% assign option_index = forloop.index0 %}
+        {% assign option_value = value | escape %}
+        {% for value in product_option.values %}
+          <input
+            type="radio"
+            class="btn-check"
+            value="{{ option_value }}"
+            data-product-option="{{ option_index }}"
+            data-product-value="{{ value }}"
+            name="{{ product_option.name | handleize }}"
+            id="{{ product_option.name | handleize }}-{{ value | handleize }}"
+            {% if product_option.selected_value == value %} checked{% endif %}
+          />
+          <label
+            class="btn btn-outline-dark"
+            for="{{ product_option.name | handleize }}-{{ value | handleize }}"
+          >
+              {{ value | escape }}
+          </label>
+        {% endfor %}
       {% endfor %}
 
       <label class="form-label" for="Quantity">Quantity</label>

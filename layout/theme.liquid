@@ -21,12 +21,25 @@
     <script type="text/javascript">
       (function($) {
         var onVariantSelected = function(variant, selector) {
-          console.log(variant);
-          // Update price display.
-          var formattedPrice = Shopify.formatMoney(variant.price, "");
-          $('#product-price').text(formattedPrice);
-          // Enable or disable the Add to Cart button.
-          $('#add-to-cart').attr('disabled', variant.available ? null : 'disabled').text(('sold out', variant.available ? 'Add to cart' : 'sold out'));
+          if (variant) {
+            if (variant.available) {
+              // Selected a valid variant that is available.
+              $('#add-to-cart').removeClass('disabled').removeAttr('disabled').val('Add to Cart').fadeTo(200,1);
+            } else {
+              // Variant is sold out.
+              $('#add-to-cart').val('Sold Out').addClass('disabled').attr('disabled', 'disabled').fadeTo(200,0.5);
+            }
+            // Whether the variant is in stock or not, we can update the price and compare at price.
+            if ( variant.compare_at_price > variant.price ) {
+              $('#product-price').html('<span class="product-price on-sale">'+ Shopify.formatMoney(variant.price, "") +'</span>'+'&nbsp;<s class="product-compare-price">'+Shopify.formatMoney(variant.compare_at_price, "")+ '</s>');
+            } else {
+              $('#product-price').html('<span class="product-price">'+ Shopify.formatMoney(variant.price, "") + '</span>' );
+            }
+          } else {
+            // variant doesn't exist.
+            $('#add-to-cart').val('Unavailable').addClass('disabled').attr('disabled', 'disabled').fadeTo(200,0.5);
+          }
+
           // Update the featured image.
           if(variant.featured_image) {
             var sizedImageUrl = Shopify.Image.getSizedImageUrl(variant.featured_image.src, 'large');
@@ -46,7 +59,18 @@
         // Create an event listener to set a specific variant option when clicking on swatches.
         $(document).on('click', '[data-change-option]', function(e) {
           e.preventDefault();
+          console.log($(this).data());
           var optionIndex = parseInt($(this).data('changeOption')), optionValue = $(this).data('changeValue');
+          console.log($(this).data());
+          if(optionSelectors.optionExistInSelect(optionSelectors.selectors[optionIndex].element, optionValue)) {
+            $(optionSelectors.selectors[optionIndex].element).val(optionValue).trigger('change');
+          }
+        });
+        
+        $(document).on('change', '[data-product-option]', function(e) {
+          console.log($(this).data());
+          var optionIndex = parseInt($(this).data('productOption'));
+          var optionValue = $(this).data('productValue');
           if(optionSelectors.optionExistInSelect(optionSelectors.selectors[optionIndex].element, optionValue)) {
             $(optionSelectors.selectors[optionIndex].element).val(optionValue).trigger('change');
           }

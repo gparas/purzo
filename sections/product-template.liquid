@@ -1,0 +1,66 @@
+  {%- unless product.has_only_default_variant -%}
+    {%- for option in product.options_with_values -%}
+      {{ option }}
+      {% assign option_index = forloop.index0 %}
+      {%- if section.settings.product_selector == 'radio' -%}
+        <fieldset id="product-select-option{{ forloop.index0 }}" name="{{ option.name | handleize }}">
+          <legend>
+            {{ option.name | escape }}
+          </legend>
+          {%- for value in option.values -%}
+            {% comment %} Check to see if there's a product size option. If there is a size, check to see if there's any availble for purchase. If not, set the variat control in a "disabled" state. {% endcomment %}
+            {%- assign variant_label_state = true -%}
+            {%- if product.options.size == 1 -%}
+              {%- unless product.variants[forloop.index0].available -%}
+                {%- assign variant_label_state = false -%}
+              {%- endunless -%}
+            {%- endif -%}
+
+            <input
+              type="radio"
+              class="btn-check"
+              {% if option.selected_value==value %} checked="checked" {% endif %}
+              {% unless variant_label_state %} disabled="disabled" {% endunless %}
+              value="{{ value | handleize }}"
+              data-change-option="option{{ option_index }}"
+              name="{{ option.name | handleize }}"
+              id="{{ option.name | handleize }}-{{ value | handleize }}"
+            />
+            <label class="btn btn-outline-dark" for="{{ option.name | handleize }}-{{ value | handleize }}">
+              {{ value | escape }}
+            </label>
+          {%- endfor -%}
+        </fieldset>
+      {%- else -%}
+        <label for="ProductSelect-option-{{ forloop.index0 }}">
+          {{ option.name | escape }}
+        </label>
+        <select id="ProductSelect-{{ forloop.index0 }}" data-index="option{{ forloop.index }}">
+          {%- for value in option.values -%}
+            <option value="{{ value | escape }}" {% if option.selected_value==value %} selected="selected" {% endif %}>
+              {{ value | escape }}
+            </option>
+          {%- endfor -%}
+        </select>
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endunless -%}
+{% comment %} {% form 'product', product, class:form_classes, novalidate: 'novalidate', data-product-form: '' %}
+{% endform %} {% endcomment %}
+
+{% schema %}
+{
+  "name": "Product pages",
+  "settings": [
+    {
+      "type": "radio",
+      "id": "product_selector",
+      "options": [
+        { "value": "radio", "label": "Radio"},
+        { "value": "select", "label": "Select"}
+      ],
+      "label": "Logo alignment"
+    }
+  ]
+}
+{% endschema %}X
